@@ -4,8 +4,8 @@ import ChatSessionModel from "../models/chat_session";
 const chatSessionService = {
   getListSessionId: async (user_id: string) => {
     return await ChatSessionModel.query()
-      .joinRelated("users")
-      .where("users.id", user_id)
+      .joinRelated("other_users")
+      .where("other_users.id", user_id)
       .select("chat_sessions.id")
       .then((row) => row.map((data) => data.id));
   },
