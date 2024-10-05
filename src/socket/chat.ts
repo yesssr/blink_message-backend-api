@@ -18,8 +18,8 @@ export const chatSocket = (io: Server) => {
 
   io.on("connection", async (socket) => {
     const id = socket.data.user.id;
-    const listSession = await chatSessionService.getAllSession(id);
-    io.emit(`/chat-session/${id}`, listSession);
+    // const listSession = await chatSessionService.getAllSession(id);
+    // io.emit(`/chat-session/${id}`, listSession);
 
     socket.on("send-message", async (data) => {
       try {
@@ -28,11 +28,11 @@ export const chatSocket = (io: Server) => {
           user_id: data.user_id,
         };
         if (!data.chat_session_id) {
-          const createSession = await chatSessionService.createSession(
-            sessData.own_id,
-            sessData.user_id
-          );
-          data.chat_session_id = createSession.id;
+          // const createSession = await chatSessionService.createSession(
+          //   sessData.own_id,
+          //   sessData.user_id
+          // );
+          // data.chat_session_id = createSession.id;
         }
         delete data.own_id;
         data.id = v4();
@@ -41,11 +41,11 @@ export const chatSocket = (io: Server) => {
           data.chat_session_id
         );
 
-        const listSession = await chatSessionService.getAllSession(
-          data.user_id
-        );
-        io.emit(`/chat-session/${data.user_id}`, listSession);
-        io.emit(`/chat/${data.session_id}`, getMessage);
+        // const listSession = await chatSessionService.getAllSession(
+        //   data.user_id
+        // );
+        // io.emit(`/chat-session/${data.user_id}`, listSession);
+        // io.emit(`/chat/${data.session_id}`, getMessage);
       } catch (error) {
         console.log(error);
       }
