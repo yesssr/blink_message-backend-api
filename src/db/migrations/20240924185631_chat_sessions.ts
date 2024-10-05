@@ -5,12 +5,15 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema
     .createTableIfNotExists("chat_sessions", table => {
       table.string("id", 36).primary();
-      table.string("own_id", 36).unsigned();
-      table.string("user_id", 36).unsigned();
+      table.string("name", 255).nullable();
+      table.enu("type", ['individuals', 'group'])
+        .defaultTo('individuals');
+      table.text("last_message", "longtext");
+      table.string("user_id").unsigned();
       table.boolean("is_deleted").defaultTo(false);
       table.timestamps(true, true, false);
-      table.foreign("own_id").references("users.id");
-      table.foreign("user_id").references("users.id");
+      table.foreign("user_id")
+        .references("users.id");
     });
 }
 

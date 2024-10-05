@@ -2,7 +2,7 @@ import type { Knex } from "knex";
 
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTableIfNotExists("user_session", table => {
+  return knex.schema.createTableIfNotExists("user_sessions", table => {
     table.string("id", 36).primary();
     table.string("user_id", 36).unsigned();
     table.string("chat_session_id", 36).unsigned();
