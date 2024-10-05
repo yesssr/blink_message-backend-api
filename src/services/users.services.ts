@@ -29,7 +29,7 @@ const userServices = {
       )
       .where("email", email)
       .first();
-  }
+  },
 };
 
 export default userServices;

@@ -12,6 +12,17 @@ import userServices from "../services/users.services";
 import { SendError } from "../middleware/error";
 
 const auth = {
+  authCredentials: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) throw new SendError(401, "invalid credentials!");
+      const decoded = verifyToken(token);
+      req.app.locals.credentials = decoded;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  },
   register: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
@@ -59,6 +70,12 @@ const auth = {
       const user = await userServices.checkEmail(email);
       if (!user) throw new SendError(401, "email is not registered!");
 
+      if (!user.is_verified)
+        throw new SendError(
+          401,
+          "email is not verified, please check your email"
+        );
+        
       const isMatch = await comparePass(password, user.password!);
       if (!isMatch) throw new SendError(401, "wrong password");
 

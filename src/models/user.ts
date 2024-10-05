@@ -1,4 +1,4 @@
-import { JSONSchema, Model } from "objection";
+import { JSONSchema, Model, RelationMappings, RelationMappingsThunk } from "objection";
 
 class UserModel extends Model {
   id!: string;
@@ -21,6 +21,21 @@ class UserModel extends Model {
       remember_token: { type: "string" },
     },
   };
+
+  static relationMappings: RelationMappings | RelationMappingsThunk = () => ({
+    sessions: {
+      relation: Model.ManyToManyRelation,
+      modelClass: UserModel,
+      join: {
+        from: "users.id",
+        through: {
+          from: "user_sessions.user_id",
+          to: "user_sessions.chat_session_id",
+        },
+        to: "chat_sessions.id",
+      },
+    },
+  });
 }
 
 export default UserModel;
