@@ -8,15 +8,18 @@ const messageServices = {
   getMessage: (session_id: string) => {
     return MessageModel.query()
       .select(
-        "id",
+        "messages.id",
         "user_id",
+        "users.name as user",
         "chat_session_id",
         "text",
         "is_read",
-        "created_at",
-        "updated_at",
+        "messages.created_at as message_time",
       )
-      .where("chat_session_id", session_id);
+      .joinRelated("users")
+      .where("is_deleted", false)
+      .andWhere("chat_session_id", session_id)
+      .orderBy("message_time", "DESC");
   }
 }
 

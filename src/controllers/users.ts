@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { v4 as uuidv4, v4 } from "uuid";
-import {
-  success,
-  sendEmailVerification,
-  verifyToken,
-  hashPass,
-} from "../utils/utils";
+import { success } from "../utils/utils";
 import userServices from "../services/users.services";
 import { SendError } from "../middleware/error";
 import chatSessionService from "../services/chat_session.services";
@@ -47,9 +42,11 @@ const userController = {
         last_message: req.body.text,
         name: req.body.name,
         type: req.body.type,
-      }
+      };
       if (!chat_session_id) {
-        const createSession = await chatSessionService.createSession(dataSession);
+        const createSession = await chatSessionService.createSession(
+          dataSession
+        );
         await chatSessionService.createUserSession(
           createSession.id,
           senderId,
@@ -60,12 +57,26 @@ const userController = {
         await chatSessionService.updateLastMessage({
           id: chat_session_id,
           ...dataSession,
-        })
+        });
       }
       req.body.user_id = senderId;
       req.body.id = v4();
       const saveMessage = await messageServices.saveMessage(req.body);
       success(res, "message send!", 201, saveMessage);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  getMessageBySession: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { session_id } = req.params;
+      const messages = await messageServices.getMessage(session_id);
+      success(res, "get message by session", 200, messages)
     } catch (error) {
       next(error);
     }
